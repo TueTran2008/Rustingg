@@ -1,8 +1,8 @@
 use std::thread;
 
 pub struct ThreadPool {
-    threads: Vec<thread::JoinHandle<>>
-};
+    threads: Vec<thread::JoinHandle()>,
+}
 enum ThreadPoolError {
     PoolErrorCreation,
 }
@@ -16,6 +16,5 @@ impl ThreadPool {
         F: FnOnce(),
         F: Send + 'static,
     {
-        f();
     }
 }
