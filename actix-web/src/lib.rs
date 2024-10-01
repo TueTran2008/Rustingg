@@ -20,7 +20,7 @@ async fn hello(name: web::Path<String>) -> impl Responder {
 }
 
 async fn health_checking(_req: HttpRequest) -> impl Responder {
-    println!("RUn in to health_checking");
+    println!("Run in to health_checking");
     HttpResponse::Ok().finish()
 }
 /// Extract form data using serde.
