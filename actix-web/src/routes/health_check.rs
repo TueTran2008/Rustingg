@@ -1,5 +1,6 @@
 //! tests/health_check.rs
 
+use crate::startup::run;
 use std::net::TcpListener;
 //use tokio::net::TcpListener;
 
@@ -71,7 +72,7 @@ async fn subcribe_return_a_400_for_invalid_form_data() {
 fn spawn_app() -> String {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
-    let server = zero2prod::run(listener).expect("Unable to run the http server");
+    let server = run(listener).expect("Unable to run the http server");
     //let server = zero2prod::run("127.0.0.1:0").expect("Run the http server");
     tokio::spawn(server);
     format!("http://127.0.0.1:{}", port)
