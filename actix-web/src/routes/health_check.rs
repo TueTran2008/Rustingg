@@ -1,6 +1,8 @@
 //! tests/health_check.rs
 
-use crate::startup::run;
+use crate::configuration::configuration_get;
+use crate::{configuration::DatabaseSettings, startup::run};
+use sqlx::{Connection, PgConnection};
 use std::net::TcpListener;
 //use tokio::net::TcpListener;
 
@@ -22,6 +24,12 @@ async fn health_check_works() {
 async fn subcribe_return_a_200_for_valid_form_data() {
     let address = spawn_app();
     //we need `reqwest` to perform HTTP requests to our application
+    let configuration = configuration_get().unwrap();
+    let connect_string = configuration.database.connect_string();
+    println!("Connection string {}", &connect_string);
+    let mut sql_connection = PgConnection::connect(&connect_string)
+        .await
+        .expect("Fail to connect to postgres with CMD: {}");
     let client = reqwest::Client::new();
     let body = "name=Darwin_Tran&email=
    darwin_tran%40vn.gemteks.com";
@@ -35,6 +43,12 @@ async fn subcribe_return_a_200_for_valid_form_data() {
     // assert!(reponse.status().is_success());
     // assert_eq!(Some(0), reponse.content_length());
     assert_eq!(200, response.status().as_u16());
+    let saved = sqlx::query!("SELECT email,name FROM subscriptions",)
+        .fetch_one(&mut sql_connection)
+        .await
+        .unwrap();
+    assert_eq!(saved.email, "darwin_tran@vn.gemteks.com");
+    assert_eq!(saved.name, "Darwin_Tran");
 }
 
 #[tokio::test]

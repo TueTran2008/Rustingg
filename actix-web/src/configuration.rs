@@ -13,6 +13,17 @@ pub struct DatabaseSettings {
     pub database_name: String,
 }
 
+impl DatabaseSettings {
+    pub fn connect_string(&self) -> String {
+        //postgresql://[User]:[Password]@[Host]:[Port]/[Database]
+        /*https://xata.io/docs/postgres*/
+        format!(
+            "postgresql://{}:{}@{}:{}/{}",
+            self.username, self.password, self.host, self.port, self.database_name
+        )
+    }
+}
+
 pub fn configuration_get() -> Result<Settings, config::ConfigError> {
     //Initialise our configuration reader
     let mut settings = config::Config::default();

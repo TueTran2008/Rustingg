@@ -1913,6 +1913,8 @@ dependencies = [
  "smallvec",
  "sqlformat",
  "thiserror",
+ "tokio",
+ "tokio-stream",
  "tracing",
  "url",
  "uuid",
@@ -1953,6 +1955,7 @@ dependencies = [
  "sqlx-sqlite",
  "syn",
  "tempfile",
+ "tokio",
  "url",
 ]
 
@@ -2241,6 +2244,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbae76ab933c85776efabc971569dd6119c580d8f5d448769dec1764bf796ef2"
 dependencies = [
  "native-tls",
+ "tokio",
+]
+
+[[package]]
+name = "tokio-stream"
+version = "0.1.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f4e6ce100d0eb49a2734f8c0812bcd324cf357d21810932c5df6b96ef2b86f1"
+dependencies = [
+ "futures-core",
+ "pin-project-lite",
  "tokio",
 ]
 
