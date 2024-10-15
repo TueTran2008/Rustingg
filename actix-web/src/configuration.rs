@@ -18,7 +18,7 @@ impl DatabaseSettings {
         //postgresql://[User]:[Password]@[Host]:[Port]/[Database]
         /*https://xata.io/docs/postgres*/
         format!(
-            "postgresql://{}:{}@{}:{}/{}",
+            "postgres://{}:{}@{}:{}/{}",
             self.username, self.password, self.host, self.port, self.database_name
         )
     }

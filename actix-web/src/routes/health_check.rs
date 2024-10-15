@@ -27,7 +27,7 @@ async fn subcribe_return_a_200_for_valid_form_data() {
     let configuration = configuration_get().unwrap();
     let connect_string = configuration.database.connect_string();
     println!("Connection string {}", &connect_string);
-    let mut sql_connection = PgConnection::connect(&connect_string)
+    let sql_connection = PgConnection::connect(&connect_string)
         .await
         .expect("Fail to connect to postgres with CMD: {}");
     let client = reqwest::Client::new();
@@ -43,7 +43,7 @@ async fn subcribe_return_a_200_for_valid_form_data() {
     // assert!(reponse.status().is_success());
     // assert_eq!(Some(0), reponse.content_length());
     assert_eq!(200, response.status().as_u16());
-    let saved = sqlx::query!("SELECT email,name FROM subscriptions",)
+    let saved = sqlx::query!("SELECT email, name FROM subscriptions",)
         .fetch_one(&mut sql_connection)
         .await
         .unwrap();
