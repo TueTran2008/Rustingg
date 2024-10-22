@@ -9,8 +9,8 @@ use std::net::TcpListener;
 #[tokio::test]
 async fn health_check_works() {
     let configuration = configuration_get().unwrap();
-    let connect_string = configuration.database.connect_string();
-    println!("Connection string {}", &connect_string);
+    //let connect_string = configuration.database.connect_string();
+    //println!("Connection string {}", &connect_string);
     let sql_connection = PgConnection::connect(&connect_string)
         .await
         .expect("Fail to connect to postgres with CMD: {}");
@@ -30,8 +30,8 @@ async fn health_check_works() {
 async fn subcribe_return_a_200_for_valid_form_data() {
     //we need `reqwest` to perform HTTP requests to our application
     let configuration = configuration_get().unwrap();
-    let connect_string = configuration.database.connect_string();
-    println!("Connection string {}", &connect_string);
+    //let connect_string = configuration.database.connect_string();
+    //println!("Connection string {}", &connect_string);
     let sql_connection = PgConnection::connect(&connect_string)
         .await
         .expect("Fail to connect to postgres with CMD: {}");

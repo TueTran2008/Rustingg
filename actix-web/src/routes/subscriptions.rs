@@ -1,7 +1,7 @@
 // use actix_web::dev::Server;
 use actix_web::{web, HttpRequest, HttpResponse, Responder};
 use chrono::Utc;
-use sqlx::PgConnection;
+use sqlx::PgPool;
 use uuid::Uuid;
 // use std::net::TcpListener;
 pub struct AppState {
@@ -23,8 +23,8 @@ pub async fn health_checking(_req: HttpRequest, data: web::Data<AppState>) -> im
 /// Extract form data using serde.
 /// This handler get called only if content type is *x-www-form-urlencoded*
 /// and content of the request could be deserialized to a `FormData` struct
-pub async fn subscribe(form: web::Form<User>, connection: web::Data<PgConnection>) -> HttpResponse {
-    let _ = sqlx::query!(
+pub async fn subscribe(form: web::Form<User>, db_pool: web::Data<PgPool>) -> HttpResponse {
+    if let Ok(_) = sqlx::query!(
         r#"INSERT INTO subscriptions (id, email, name, subscribed_at)
     VALUES ($1, $2, $3, $4)"#,
         Uuid::new_v4(),
@@ -32,8 +32,13 @@ pub async fn subscribe(form: web::Form<User>, connection: web::Data<PgConnection
         form.name,
         Utc::now()
     )
-    .execute(connection.get_ref())
-    .await;
+    .execute(db_pool.get_ref())
+    .await
+    {
+        HttpResponse::Ok().finish()
+    } else {
+        println!("Error when insert user data for subscription");
+        HttpResponse::InternalServerError().finish()
+    }
     // println!("Run into subcribe");
-    HttpResponse::Ok().finish()
 }
