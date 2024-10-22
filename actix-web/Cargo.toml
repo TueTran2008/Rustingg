@@ -23,6 +23,8 @@ actix-web = "4"
 tokio = { version = "1.23.0", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
 config = "0.11"
+uuid = {version = "1.11.0", features = ["v4"]}
+chrono = "0.4.15"
 # • runtime-actix-rustls tells sqlx to use the actix runtime for its futures and rustls as TLS
 # backend;
 # • macros gives us access to sqlx::query! and sqlx::query_as!, which we will be using exten-

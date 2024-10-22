@@ -1,5 +1,5 @@
 //! src/startup.rs
-use crate::routes::{health_checking, subcribe, AppState};
+use crate::routes::{health_checking, subscribe, AppState};
 use actix_web::dev::Server;
 use actix_web::{web, App, HttpServer};
 use sqlx::{Connection, PgConnection};
@@ -15,7 +15,7 @@ pub fn run(listener: TcpListener, connection: PgConnection) -> Result<Server, st
     let server = HttpServer::new(|| {
         App::new()
             .route("/health_check", web::get().to(health_checking))
-            .route("/subscriptions", web::post().to(subcribe))
+            .route("/subscriptions", web::post().to(subscribe))
             .app_data(web::Data::new(AppState {
                 app_name: String::from("Zero2Prod"),
             }))

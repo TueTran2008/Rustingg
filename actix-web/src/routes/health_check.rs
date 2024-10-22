@@ -8,7 +8,13 @@ use std::net::TcpListener;
 
 #[tokio::test]
 async fn health_check_works() {
-    let address = spawn_app();
+    let configuration = configuration_get().unwrap();
+    let connect_string = configuration.database.connect_string();
+    println!("Connection string {}", &connect_string);
+    let sql_connection = PgConnection::connect(&connect_string)
+        .await
+        .expect("Fail to connect to postgres with CMD: {}");
+    let address = spawn_app(sql_connection);
     //we need `reqwest` to perform HTTP requests to our application
     let client = reqwest::Client::new();
     // Action
@@ -22,7 +28,6 @@ async fn health_check_works() {
 }
 #[tokio::test]
 async fn subcribe_return_a_200_for_valid_form_data() {
-    let address = spawn_app();
     //we need `reqwest` to perform HTTP requests to our application
     let configuration = configuration_get().unwrap();
     let connect_string = configuration.database.connect_string();
@@ -30,6 +35,7 @@ async fn subcribe_return_a_200_for_valid_form_data() {
     let sql_connection = PgConnection::connect(&connect_string)
         .await
         .expect("Fail to connect to postgres with CMD: {}");
+    let address = spawn_app(sql_connection);
     let client = reqwest::Client::new();
     let body = "name=Darwin_Tran&email=
    darwin_tran%40vn.gemteks.com";
@@ -83,10 +89,10 @@ async fn subcribe_return_a_400_for_invalid_form_data() {
 // if we fail to perform the required setup we can just panic and crash
 // all the things.
 //Lauch our application in background  ~somehow~
-fn spawn_app() -> String {
+fn spawn_app(connection: PgConnection) -> String {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
-    let server = run(listener).expect("Unable to run the http server");
+    let server = run(listener, connection).expect("Unable to run the http server");
     //let server = zero2prod::run("127.0.0.1:0").expect("Run the http server");
     tokio::spawn(server);
     format!("http://127.0.0.1:{}", port)
