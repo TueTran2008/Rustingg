@@ -40,5 +40,4 @@ pub async fn subscribe(form: web::Form<User>, db_pool: web::Data<PgPool>) -> Htt
         println!("Error when insert user data for subscription");
         HttpResponse::InternalServerError().finish()
     }
-    // println!("Run into subcribe");
 }
