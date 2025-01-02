@@ -2,34 +2,40 @@
 use log;
 use sqlx::PgPool;
 use std::{default, net::TcpListener};
-use tracing::level_filters::LevelFilter;
 use tracing::subscriber::set_global_default;
 use tracing::Subscriber;
 use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
 use tracing_log::LogTracer;
-use tracing_subscriber::filter::{Directive, EnvFilter};
+use tracing_subscriber::filter::EnvFilter;
 use tracing_subscriber::{layer::SubscriberExt, Registry};
 use zero2prod::{configuration::configuration_get, startup::run};
-
-fn get_subscriber(name: String, directive: Directive) -> impl Subscriber + Send + Sync {
-    let env_filter = EnvFilter::from_default_env().add_directive(directive);
+async fn get_subscriber(name: String, filter_level: String) -> impl Subscriber {
+    LogTracer::init().expect("Get log tracer logger failed");
+    let env_filter = EnvFilter::from_default_env();
     let formatting_layer = BunyanFormattingLayer::new(name, std::io::stdout);
-    let global_subscriber = Registry::default()
+    let subscriber = Registry::default()
         .with(env_filter)
         .with(formatting_layer)
         .with(JsonStorageLayer);
-    return global_subscriber;
-}
-
-fn init_subscriber(subscriber: impl Subscriber + Send + Sync) {
-    LogTracer::init().expect("Get log tracer logger failed");
-    //let Subscriber = get_subscriber(String::from("Darwin backend"), LevelFilter::INFO).await;
-    set_global_default(subscriber).expect("Failed to set subscriber");
+    return subcriber;
 }
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    let web_subcriber = get_subscriber("darwin".into(), LevelFilter::INFO.into());
-    init_subscriber(web_subcriber);
+    // Bubble up the io::Error if we failed to bind the address
+    // // Otherwise call .await on our Server
+    LogTracer::init().expect("Get log tracer logger");
+
+    let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("debug"));
+
+    let formating_layer =
+        BunyanFormattingLayer::new(String::from("DarwinBackEnd"), std::io::stdout);
+
+    let subscriber = Registry::default()
+        .with(env_filter)
+        .with(JsonStorageLayer)
+        .with(formating_layer);
+
+    set_global_default(subscriber).expect("Failed to set subscriber");
     let configuration = configuration_get().unwrap();
     //let connection = PgConnection::connect(&configuration.database.connect_string
     let connection_pool = PgPool::connect(&configuration.database.connect_string())

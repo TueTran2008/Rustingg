@@ -25,11 +25,12 @@ serde = { version = "1", features = ["derive"] }
 config = "0.11"
 uuid = { version = "1.11.0", features = ["v4"]}
 chrono = "0.4.15"
-env_logger = "0.9"
+#env_logger = "0.9"
 log = "0.4"
-tracing = { version = "0.1", feature = ["log"]}
+tracing = { version = "0.1.41", feature = ["log"]}
 tracing-bunyan-formatter = "0.3"
-tracing-subscriber = { version = "0.3" , feature = ["registry", "env-filter"]}
+tracing-subscriber = { version = "0.3.19" , features = ["registry", "env-filter"]}
+tracing-log = "0.2.0"
 # • runtime-actix-rustls tells sqlx to use the actix runtime for its futures and rustls as TLS
 # backend;
 # • macros gives us access to sqlx::query! and sqlx::query_as!, which we will be using exten-

@@ -1,29 +1,12 @@
-use std::{io::Read, str::Bytes};
-#[derive(Debug)]
-struct Foo {
-    a: bool,
-    b: u32,
+enum List {
+    Con(i32, Rc<List>),
+    Nil,
 }
-use tracing::{error, info, span, trace, warn, Level};
+use crate::List::*;
+use std::rc::*;
 fn main() {
-    tracing_subscriber::fmt::init();
-    let span = span!(Level::INFO, "main");
-    let _guard = span.enter();
-    for file in std::env::args() {
-        let span = span!(tracing::Level::INFO, "file", hehe = %file);
-        let _guard = span.enter();
-
-        info!("opening a file");
-        // let mut fd = std::fs::File::open(file).unwrap();
-        // info!("this happen");
-        // info!("that happen");
-        // let mut bytes = Vec::new();
-        warn!("reading the file");
-        // fd.read(&mut bytes).unwrap();
-        let foo = Foo { a: true, b: 10 };
-        info!(parsing = ?foo, "Parsing file");
-        //
-        //
-        info!("done with file");
-    }
+    let a = Rc::new(Con(1, Rc::new(Con(10, Rc::new(Nil)))));
+    let b = Con(2, a.clone());
+    let c = Con(3, a.clone());
+    println!("{}", Rc::strong_count(&a));
 }
