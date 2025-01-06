@@ -1,9 +1,11 @@
 //! tests/health_check.rs
 
 use crate::configuration::configuration_get;
+use crate::telemetry::*;
 use crate::{configuration::DatabaseSettings, startup::run};
 use sqlx::{Executor, PgPool};
 use std::net::TcpListener;
+use tracing_subscriber::filter::LevelFilter;
 use uuid::Uuid;
 struct TestData {
     address: String,
@@ -111,6 +113,8 @@ pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
 // all the things.
 //Lauch our application in background  ~somehow~
 async fn spawn_app() -> TestData {
+    let test_sub = get_subscriber("test_debug".into(), LevelFilter::INFO.into());
+    init_subscriber(test_sub);
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
 
