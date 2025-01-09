@@ -3,8 +3,7 @@ use std::cell::UnsafeCell;
 pub struct Cell<T> {
     value: UnsafeCell<T>,
 }
-
-//unsafe implt <T> Sync for Cell<T> {}
+// impl<T> !Sync for Cell<T> {}
 //unsafe impl<T> Sync for Cell<T> {}
 //}
 impl<T> Cell<T> {
